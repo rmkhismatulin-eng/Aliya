@@ -30,11 +30,17 @@ jobs:
           mkdir _site
           unzip -o "priglashenie_dlya_alii_v5_video (1).zip" -d _site
           test -f _site/index.html
+          test -f _site/aliya_intro.mp4
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('_site/index.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('<img class="intro-gif" src="aliya_intro.gif" alt="Алия" />', '<video class="intro-gif" autoplay muted loop playsinline preload="auto"><source src="aliya_intro.mp4" type="video/mp4"></video>')
+          p.write_text(s, encoding='utf-8')
+          PY
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
